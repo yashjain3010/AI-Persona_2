@@ -74,15 +74,15 @@ const FilterChips: React.FC<FilterChipsProps> = ({
     switch (department) {
       case "Tech":
       case "Technology":
-        return "#1976d2";
+        return "#2e7d32";
       case "Marketing":
-        return "#ed6c02";
+        return "#2e7d32";
       case "Sales":
         return "#2e7d32";
       case "All":
-        return "#757575";
+        return "#2e7d32";
       default:
-        return "#757575";
+        return "#2e7d32";
     }
   };
 
@@ -122,8 +122,8 @@ const FilterChips: React.FC<FilterChipsProps> = ({
               label="All Departments"
               variant="filled"
               sx={{
-                backgroundColor: getDepartmentColor("All"),
-                color: "#fff",
+                backgroundColor: "#E8F2ED",
+                color: "#222",
                 fontWeight: 600,
                 borderRadius: 2,
                 fontSize: { xs: "13px", sm: "14px" },
@@ -131,6 +131,13 @@ const FilterChips: React.FC<FilterChipsProps> = ({
                 "& .MuiChip-label": {
                   px: { xs: 1, sm: 1.5 },
                 },
+                "& .MuiChip-deleteIcon": {
+                  color: "#222",
+                  "&:hover": {
+                    color: "#388e3c",
+                  },
+                },
+                boxShadow: `0 0 0 2px #E8F2ED20`,
               }}
             />
           )}
@@ -146,15 +153,15 @@ const FilterChips: React.FC<FilterChipsProps> = ({
                   onDelete={() => onFilterChange(filter.value)}
                   variant="filled"
                   sx={{
-                    backgroundColor: getDepartmentColor(filter.value),
-                    color: "#fff",
+                    backgroundColor: "#E8F2ED",
+                    color: "#2e7d32",
                     fontWeight: 600,
                     borderRadius: 2,
                     fontSize: { xs: "13px", sm: "14px" },
                     height: { xs: 32, sm: 36 },
                     transition: "all 0.2s ease-in-out",
                     "&:hover": {
-                      backgroundColor: getDepartmentColor(filter.value),
+                      backgroundColor: "#d4edd4",
                       transform: "translateY(-1px)",
                       boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                     },
@@ -162,14 +169,12 @@ const FilterChips: React.FC<FilterChipsProps> = ({
                       px: { xs: 1, sm: 1.5 },
                     },
                     "& .MuiChip-deleteIcon": {
-                      color: "white",
+                      color: "#2e7d32",
                       "&:hover": {
-                        color: "#f0f0f0",
+                        color: "#388e3c",
                       },
                     },
-                    boxShadow: `0 0 0 2px ${getDepartmentColor(
-                      filter.value
-                    )}20`,
+                    boxShadow: `0 0 0 2px #E8F2ED20`,
                   }}
                 />
               )
@@ -310,17 +315,18 @@ const FilterChips: React.FC<FilterChipsProps> = ({
                       checked={isSelected}
                       size="small"
                       sx={{
-                        color: getDepartmentColor(option),
+                        color: "#2e7d32",
                         "&.Mui-checked": {
-                          color: getDepartmentColor(option),
+                          color: "#2e7d32",
+                        },
+                        "&:hover": {
+                          backgroundColor: "rgba(46, 125, 50, 0.04)",
                         },
                         "& .MuiSvgIcon-root": {
                           fontSize: 18,
                         },
-                        // Disable pointer events on checkbox to prevent double handling
                         pointerEvents: "none",
                       }}
-                      // Prevent checkbox from handling its own clicks
                       onChange={() => {}}
                     />
                   }
@@ -337,10 +343,8 @@ const FilterChips: React.FC<FilterChipsProps> = ({
                     "& .MuiFormControlLabel-label": {
                       flex: 1,
                     },
-                    // Disable pointer events on the label to prevent conflicts
                     pointerEvents: "none",
                   }}
-                  // Prevent FormControlLabel from handling clicks
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

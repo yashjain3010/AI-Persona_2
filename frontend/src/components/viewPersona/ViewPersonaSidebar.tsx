@@ -15,8 +15,8 @@ interface ViewPersonaSidebarProps {
 }
 
 const ViewPersonaSidebar: React.FC<ViewPersonaSidebarProps> = ({ personas, onSelect, currentPersonaId }) => (
-  <Box sx={{ width: 220, pt: 4, pr: 3 }}>
-    <Typography sx={{ fontWeight: 800, fontSize: 18, mb: 2, color: '#222' }}>Similar Personas</Typography>
+  <Box sx={{ width: 220, pt: 0, pr: 0 }}>
+    <Typography sx={{ fontWeight: 800, fontSize: 18, mb: 0, color: '#222' }}>Similar Personas</Typography>
     <List>
       {personas.map((p) => (
         <ListItem 

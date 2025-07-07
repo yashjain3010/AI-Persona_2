@@ -70,11 +70,19 @@ const PersonaCard: React.FC<PersonaCardProps> = ({
             pointerEvents: "auto",
             color: "white",
           },
-          "& .role-link": {
-            color: "#2e7d32",
-            "& .external-icon": {
-              transform: "translateX(2px)",
-            },
+        },
+        // Prevent hover effects when hovering over role
+        "&:has(.role-link:hover)": {
+          transform: "none",
+          "& .persona-image": {
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          },
+          "& .persona-image-overlay": {
+            opacity: 0,
+          },
+          "& .start-chat-text": {
+            opacity: 0,
+            pointerEvents: "none",
           },
         },
       }}
@@ -182,6 +190,9 @@ const PersonaCard: React.FC<PersonaCardProps> = ({
             gap: 0.5,
             cursor: "pointer",
             transition: "color 0.2s ease-in-out",
+            color: "#52946B",
+            position: "relative",
+            zIndex: 10, // Ensure it's above other elements
             "&:hover": {
               color: "#2e7d32",
               "& .external-icon": {
