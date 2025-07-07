@@ -160,30 +160,8 @@ const Sidebar: React.FC<{
           mx: { xs: 1.5, sm: 2 },
           width: "100%",
           maxWidth: "100%",
-          mt: 2,
         }}
       >
-        <ListItem button sx={{ px: 0, mb: { xs: 1, sm: 1.2 }, minWidth: 0 }}>
-          <ListItemAvatar sx={{ minWidth: { xs: 40, sm: 32 } }}>
-            <UploadIcon sx={{ color: "#222", fontSize: { xs: 24, sm: 22 } }} />
-          </ListItemAvatar>
-          <ListItemText
-            primary={
-              <Typography
-                sx={{
-                  fontWeight: 500,
-                  color: "#222",
-                  fontSize: { xs: 15, sm: 16 },
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                Import Chat
-              </Typography>
-            }
-          />
-        </ListItem>
         <ListItem
           button
           sx={{ px: 0, mb: { xs: 1, sm: 1.2 }, minWidth: 0 }}
@@ -192,7 +170,13 @@ const Sidebar: React.FC<{
           }
         >
           <ListItemAvatar sx={{ minWidth: { xs: 40, sm: 32 } }}>
-            <PersonIcon sx={{ color: "#222", fontSize: { xs: 24, sm: 22 } }} />
+            <PersonIcon
+              sx={{
+                color: "#222",
+                fontSize: { xs: 24, sm: 22 },
+                marginTop: 0.5,
+              }}
+            />
           </ListItemAvatar>
           <ListItemText
             primary={
@@ -213,7 +197,13 @@ const Sidebar: React.FC<{
         </ListItem>
         <ListItem button sx={{ px: 0, minWidth: 0 }}>
           <ListItemAvatar sx={{ minWidth: { xs: 40, sm: 32 } }}>
-            <SearchIcon sx={{ color: "#222", fontSize: { xs: 24, sm: 22 } }} />
+            <SearchIcon
+              sx={{
+                color: "#222",
+                fontSize: { xs: 24, sm: 22 },
+                marginTop: 0.5,
+              }}
+            />
           </ListItemAvatar>
           <ListItemText
             primary={
