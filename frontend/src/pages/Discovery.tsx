@@ -1,11 +1,9 @@
 import React, { useState, useMemo } from "react";
-import {
-  Container,
-  Box,
-} from "@mui/material";
-import Header from "../components/Header";
-import SearchBar from "../components/SearchBar";
-import FilterChips from "../components/FilterChips";
+import { Container, Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import Header from "../components/discover/Header";
+import SearchBar from "../components/discover/SearchBar";
+import FilterChips from "../components/discover/FilterChips";
 import PersonaGrid from "../components/PersonaGrid";
 import Pagination from "../components/Pagination";
 import { mockPersonas, mockFilters } from "../data/mockData";
@@ -15,17 +13,36 @@ interface DiscoveryProps {
   onStartChat: (persona: Persona) => void;
 }
 
-const SEARCH_AREA_WIDTH = { xs: '100%', sm: 900, md: 1100, lg: 1200 };
+const SEARCH_AREA_WIDTH = { xs: "100%", sm: 900, md: 1100, lg: 1200 };
+
+// Define department order for consistent sorting
+const DEPARTMENT_ORDER = ["Tech", "Marketing", "Sales"];
 
 const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState<FilterOption[]>(mockFilters);
+
+  // Initialize filters with all set to inactive (false) so "All" appears selected
+  const [filters, setFilters] = useState<FilterOption[]>(
+    mockFilters.map((filter) => ({
+      ...filter,
+      active: false, // Set all filters to inactive by default
+    }))
+  );
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Filter logic
-  const filteredPersonas = useMemo(() => {
+  // Get currently selected departments
+  const selectedDepartments = useMemo(() => {
+    return filters.filter((f) => f.active).map((f) => f.value);
+  }, [filters]);
+
+  // Enhanced filter and sort logic
+  const filteredAndSortedPersonas = useMemo(() => {
     let filtered = mockPersonas;
+
+    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(
         (persona) =>
@@ -33,19 +50,34 @@ const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
           persona.role.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    const activeFilters = filters.filter((f) => f.active).map((f) => f.value);
-    if (activeFilters.length > 0) {
+
+    // Apply department filters - only filter if specific departments are selected
+    // If no departments are selected (All is selected), show all personas
+    if (selectedDepartments.length > 0) {
       filtered = filtered.filter((persona) =>
-        activeFilters.includes(persona.department)
+        selectedDepartments.includes(persona.department)
       );
     }
-    return filtered;
-  }, [searchTerm, filters]);
+
+    // Sort by department order, then by name
+    const sorted = [...filtered].sort((a, b) => {
+      const aDeptIndex = DEPARTMENT_ORDER.indexOf(a.department);
+      const bDeptIndex = DEPARTMENT_ORDER.indexOf(b.department);
+
+      if (aDeptIndex !== bDeptIndex) {
+        return aDeptIndex - bDeptIndex;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    return sorted;
+  }, [searchTerm, selectedDepartments]);
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredPersonas.length / itemsPerPage);
+  const totalPersonas = filteredAndSortedPersonas.length;
+  const totalPages = Math.ceil(totalPersonas / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedPersonas = filteredPersonas.slice(
+  const paginatedPersonas = filteredAndSortedPersonas.slice(
     startIndex,
     startIndex + itemsPerPage
   );
@@ -61,16 +93,33 @@ const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
     );
     setCurrentPage(1);
   };
+
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
   };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  // Handle view persona navigation
+  const handleViewPersona = (persona: Persona) => {
+    navigate(`/view-persona/${persona.id}`);
+  };
+
+  // Check if "All" is selected (no specific departments selected)
+  const isAllSelected = selectedDepartments.length === 0;
+
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#ffffff", overflowX: "hidden", position: 'relative' }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        backgroundColor: "#ffffff",
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
       <Header />
       <Container
         maxWidth={false}
@@ -83,9 +132,17 @@ const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
           alignItems: "center",
         }}
       >
-        {/* Search and Filter Section (aligned area) */}
-        <Box sx={{ width: '100%', maxWidth: SEARCH_AREA_WIDTH, mb: { xs: 2, sm: 3 } }}>
-          <Box sx={{ display: "flex", justifyContent: "center", width: '100%' }}>
+        {/* Search Section */}
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: SEARCH_AREA_WIDTH,
+            mb: { xs: 2, sm: 3 },
+          }}
+        >
+          <Box
+            sx={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
             <SearchBar
               value={searchTerm}
               onChange={handleSearchChange}
@@ -93,20 +150,92 @@ const Discovery: React.FC<DiscoveryProps> = ({ onStartChat }) => {
               fullWidth={true}
             />
           </Box>
-          <Box sx={{ width: '100%', mt: { xs: 1, sm: 1 }, display: 'flex', justifyContent: 'flex-start' }}>
-            <FilterChips filters={filters} onFilterChange={handleFilterChange} />
-          </Box>
         </Box>
-        {/* Personas Grid - aligned with search bar */}
-        <Box sx={{ width: '100%', maxWidth: SEARCH_AREA_WIDTH, display: 'flex', justifyContent: 'flex-start' }}>
-          <PersonaGrid
-            personas={paginatedPersonas}
-            onStartChat={onStartChat}
+
+        {/* Enhanced Filter Chips */}
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: SEARCH_AREA_WIDTH,
+            mb: 3,
+          }}
+        >
+          <FilterChips
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            showSelectedIndicator={true}
+            showClearAll={true}
+            title="Filter by Department"
           />
         </Box>
+
+        {/* Results Summary with better messaging */}
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: SEARCH_AREA_WIDTH,
+            mb: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        ></Box>
+
+        {/* Personas Grid */}
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: SEARCH_AREA_WIDTH,
+            display: "flex",
+            justifyContent: "flex-start",
+          }}
+        >
+          {totalPersonas > 0 ? (
+            <PersonaGrid
+              personas={paginatedPersonas}
+              onStartChat={onStartChat}
+              onViewPersona={handleViewPersona}
+            />
+          ) : (
+            <Box
+              sx={{
+                textAlign: "center",
+                py: 8,
+                px: 2,
+                width: "100%",
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  color: "#666",
+                  mb: 1,
+                }}
+              >
+                No personas found
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#999",
+                }}
+              >
+                Try adjusting your search or filters
+              </Typography>
+            </Box>
+          )}
+        </Box>
+
         {/* Pagination */}
         {totalPages > 1 && (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 3, sm: 4 }, mb: { xs: 2, sm: 3 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mt: { xs: 3, sm: 4 },
+              mb: { xs: 2, sm: 3 },
+            }}
+          >
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}

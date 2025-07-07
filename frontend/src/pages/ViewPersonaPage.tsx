@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/discover/Header";
 import ViewPersonaSidebar from "../components/viewPersona/ViewPersonaSidebar";
 import ViewPersonaHeader from "../components/viewPersona/ViewPersonaHeader";
 import ViewPersonaTabs from "../components/viewPersona/ViewPersonaTabs";

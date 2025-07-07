@@ -6,17 +6,29 @@ import type { Persona } from "../types";
 interface PersonaGridProps {
   personas: Persona[];
   onStartChat?: (persona: Persona) => void;
+  onViewPersona?: (persona: Persona) => void;
 }
 
-const PersonaGrid: React.FC<PersonaGridProps> = ({ personas, onStartChat }) => {
-
+const PersonaGrid: React.FC<PersonaGridProps> = ({
+  personas,
+  onStartChat,
+  onViewPersona,
+}) => {
   return (
-    <Box sx={{ flexGrow: 1, py: { xs: 1, sm: -1, md: -1 }, px: 0, width: '100%', maxWidth: 1200 }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        py: { xs: 1, sm: -1, md: -1 },
+        px: 0,
+        width: "100%",
+        maxWidth: 1200,
+      }}
+    >
       <Grid
         container
         spacing={{ xs: 2, sm: 3, md: 4 }}
         justifyContent="flex-start"
-        sx={{ width: '100%', margin: 0 }}
+        sx={{ width: "100%", margin: 0 }}
       >
         {personas.map((persona) => (
           <Grid
@@ -27,7 +39,12 @@ const PersonaGrid: React.FC<PersonaGridProps> = ({ personas, onStartChat }) => {
             key={persona.id}
             sx={{ width: "100%" }}
           >
-            <PersonaCard persona={persona} onStartChat={onStartChat} cardFullWidth />
+            <PersonaCard
+              persona={persona}
+              onStartChat={onStartChat}
+              onViewPersona={onViewPersona}
+              cardFullWidth
+            />
           </Grid>
         ))}
       </Grid>

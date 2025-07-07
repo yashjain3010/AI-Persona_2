@@ -28,7 +28,7 @@ import Popover from '@mui/material/Popover';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsPage from '../pages/SettingsPage';
+import SettingsPage from '../../pages/SettingsPage';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -239,12 +239,6 @@ const Header: React.FC = () => {
             }}
           >
             <List sx={{ py: 0 }}>
-              <ListItem button onClick={() => { handleProfileClose(); handleSettingsOpen(); }}>
-                <ListItemIcon>
-                  <CiSettings size={20} />
-                </ListItemIcon>
-                <ListItemText primary="Settings" />
-              </ListItem>
               <ListItem button>
                 <ListItemIcon>
                   <HelpOutlineIcon />

@@ -13,17 +13,14 @@ import {
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { IoSend } from "react-icons/io5";
-import MicIcon from "@mui/icons-material/Mic";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { TbHistoryToggle } from "react-icons/tb";
-import HistoryIcon from "@mui/icons-material/History";
 import type { Persona } from "../types";
 import ChatHeader from "../components/ChatHeader";
 import Sidebar from "../components/sidebar/Sidebar";
 import { mockPersonas } from "../data/mockData";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { sendToWebhook, isWebhookPersona } from "../services/webhookService";
+import ChatInputBar from "../components/ChatInputBar";
 
 interface ChatPageProps {
   onBack: () => void;
@@ -96,11 +93,11 @@ const TypingIndicator = () => (
 
 export default function ChatPage({ onBack }: ChatPageProps) {
   const { id } = useParams();
+  const navigate = useNavigate();
   const persona = mockPersonas.find((p) => p.id === id);
   if (!persona) {
     return <div>Persona not found</div>;
   }
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -119,9 +116,6 @@ export default function ChatPage({ onBack }: ChatPageProps) {
     userAvatar = user.avatar || "";
   } catch {}
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
   // Handler to open sidebar from header
   const handleMenuClick = () => setSidebarOpen(true);
   // Handler to close sidebar
@@ -145,15 +139,22 @@ export default function ChatPage({ onBack }: ChatPageProps) {
     handleSwitcherClose();
   };
 
-  // Handle sending a message
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const trimmed = messageInput.trim();
+  const handleAvatarClick = () => {
+    navigate(`/view-persona/${persona.id}`);
+  };
+
+  const handleRoleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setSwitcherOpen(true);
+  };
+
+  // Updated handleSendMessage to work with ChatInputBar
+  const handleSendMessage = async (messageText: string) => {
+    const trimmed = messageText.trim();
     if (!trimmed) return;
 
     // Add user message
     setMessages((prev) => [...prev, { sender: "user", text: trimmed }]);
-    setMessageInput("");
 
     // Check if this persona uses webhook
     if (isWebhookPersona(persona.id)) {
@@ -161,7 +162,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
         // Add a typing indicator
         setMessages((prev) => [
           ...prev,
-          { sender: "ai", text: "", isTyping: true }, // Add isTyping flag
+          { sender: "ai", text: "", isTyping: true },
         ]);
 
         // Call the webhook
@@ -177,7 +178,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
           newMessages[newMessages.length - 1] = {
             sender: "ai",
             text: webhookResponse,
-            isTyping: false, // Remove typing flag
+            isTyping: false,
           };
           return newMessages;
         });
@@ -296,6 +297,10 @@ export default function ChatPage({ onBack }: ChatPageProps) {
     return () => clearTimeout(timeoutId);
   }, [messages]);
 
+  // Check if user has sent first message
+  const hasUserMessages =
+    messages.filter((msg) => msg.sender === "user").length > 0;
+
   return (
     <Box
       sx={{
@@ -303,8 +308,8 @@ export default function ChatPage({ onBack }: ChatPageProps) {
         bgcolor: "#fff",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden", // Prevent page-level scroll
-        width: "100vw", // Ensure no horizontal scroll
+        overflow: "hidden",
+        width: "100vw",
         maxWidth: "100vw",
       }}
     >
@@ -326,12 +331,12 @@ export default function ChatPage({ onBack }: ChatPageProps) {
           display: "flex",
           flexDirection: "row",
           flex: 1,
-          overflow: "hidden", // Contain the scrolling areas
+          overflow: "hidden",
           width: "100%",
           maxWidth: "100vw",
         }}
       >
-        {/* Sidebar - only this should scroll */}
+        {/* Sidebar */}
         {sidebarOpen && (
           <Sidebar onClose={handleSidebarClose} currentPersonaId={persona.id} />
         )}
@@ -351,7 +356,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
             overflow: "hidden",
           }}
         >
-          {/* Scrollable message list fills the rest of the space */}
+          {/* Scrollable message list */}
           <Box
             ref={messageListRef}
             sx={{
@@ -364,13 +369,12 @@ export default function ChatPage({ onBack }: ChatPageProps) {
               mx: 0,
               overflowY: "auto",
               overflowX: "hidden",
-              pb: { xs: 20, sm: 30 }, // Add bottom padding to create space above input bar
-              scrollbarWidth: "none", // Firefox
-              "&::-webkit-scrollbar": { display: "none" }, // Chrome, Safari, Opera
+              pb: { xs: 20, sm: 30 },
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
               minHeight: 0,
             }}
           >
-            {/* Message list */}
             <Box
               sx={{
                 width: "100%",
@@ -384,28 +388,35 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                 overflow: "visible",
               }}
             >
-              {/* Persona Profile - now scrolls with messages */}
+              {/* Persona Profile with separate click handlers */}
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  cursor: "pointer",
                   mb: { xs: 2, sm: 3 },
                   px: { xs: 2, sm: 0 },
                   pt: { xs: 2, sm: 3 },
                   pb: { xs: 1, sm: 2 },
                 }}
-                onClick={handleProfileClick}
               >
+                {/* Avatar - clicks to view persona */}
                 <Avatar
                   src={persona.avatar}
                   sx={{
                     width: { xs: 80, sm: 96 },
                     height: { xs: 80, sm: 96 },
                     mb: { xs: 1.5, sm: 2 },
+                    cursor: "pointer",
+                    transition: "transform 0.2s ease-in-out",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
                   }}
+                  onClick={handleAvatarClick}
                 />
+
+                {/* Name */}
                 <Typography
                   variant="h5"
                   sx={{
@@ -418,6 +429,8 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                 >
                   {persona.name}
                 </Typography>
+
+                {/* Role - clicks to show persona switcher */}
                 <Box
                   sx={{
                     display: "flex",
@@ -425,7 +438,16 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                     gap: 1,
                     mb: 0,
                     flexDirection: { xs: "column", sm: "row" },
+                    cursor: "pointer",
+                    borderRadius: 1,
+                    px: 1,
+                    py: 0.5,
+                    transition: "background-color 0.2s ease-in-out",
+                    "&:hover": {
+                      backgroundColor: "#f5f5f5",
+                    },
                   }}
+                  onClick={handleRoleClick}
                 >
                   <Typography
                     variant="subtitle1"
@@ -443,6 +465,8 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                   />
                 </Box>
               </Box>
+
+              {/* Messages */}
               {messages.map((msg, idx) =>
                 msg.sender === "ai" ? (
                   <Box
@@ -578,6 +602,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                 )
               )}
             </Box>
+
             {/* Persona Switcher Popup */}
             {switcherOpen && anchorEl && (
               <ClickAwayListener onClickAway={handleSwitcherClose}>
@@ -657,155 +682,18 @@ export default function ChatPage({ onBack }: ChatPageProps) {
             )}
           </Box>
 
-          {/* Fixed elements at the bottom */}
-          <Box
-            sx={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              pt: 0,
-              pb: { xs: 2, sm: 4 },
-              background:
-                "linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 20%)",
-            }}
-          >
-            {/* Suggestion Chips - Hide after user sends first message */}
-            {messages.filter((msg) => msg.sender === "user").length === 0 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: { xs: 1, sm: 2 },
-                  maxWidth: sidebarOpen
-                    ? { xs: "100%", sm: `calc(1120px - ${SIDEBAR_WIDTH}px)` }
-                    : { xs: "100%", sm: 960 },
-                  width: "100%",
-                  px: { xs: 2, sm: 3 },
-                  mb: 0,
-                  mt: 0,
-                  flexWrap: "wrap",
-                  justifyContent: "flex-start",
-                }}
-              >
-                {suggestionChips.map((label, idx) => (
-                  <Chip
-                    key={idx}
-                    label={label}
-                    onClick={() => {
-                      setMessageInput(label);
-                      // Auto-send the message after setting it
-                      setTimeout(() => handleSendMessage(), 100);
-                    }}
-                    sx={{
-                      bgcolor: "#e8f5e8",
-                      fontWeight: 500,
-                      fontSize: { xs: 13, sm: 15 },
-                      height: { xs: 32, sm: 36 },
-                      mb: { xs: 1, sm: 0 },
-                      cursor: "pointer",
-                      "&:hover": {
-                        bgcolor: "#d4edd4",
-                      },
-                    }}
-                  />
-                ))}
-              </Box>
-            )}
-
-            {/* Chat Input */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                maxWidth: sidebarOpen
-                  ? { xs: "100%", sm: `calc(1120px - ${SIDEBAR_WIDTH}px)` }
-                  : { xs: "100%", sm: 960 },
-                width: "100%",
-                px: { xs: 2, sm: 3 },
-                mt: { xs: 2, sm: 3 },
-              }}
-            >
-              {/* Single integrated chat input bar */}
-              <Paper
-                component="form"
-                onSubmit={handleSendMessage}
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  width: "100%",
-                  borderRadius: "24px",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                  bgcolor: "#e8f5e8",
-                  p: { xs: 1.5, sm: 2 },
-                  border: "1px solid #d0d7de",
-                  minHeight: { xs: 60, sm: 70 },
-                }}
-                elevation={0}
-              >
-                {/* Main input field - takes up most space */}
-                <InputBase
-                  sx={{
-                    flex: 1,
-                    fontSize: { xs: 14, sm: 16 },
-                    mr: 2,
-                    "& input": {
-                      fontSize: { xs: 14, sm: 16 },
-                      py: 0.5,
-                    },
-                    "& textarea": {
-                      fontSize: { xs: 14, sm: 16 },
-                      resize: "none",
-                      lineHeight: 1.4,
-                      py: 0.5,
-                    },
-                  }}
-                  placeholder="Send a message"
-                  inputProps={{ "aria-label": "send a message" }}
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                  autoFocus
-                  multiline
-                  maxRows={4}
-                  minRows={1}
-                />
-
-                {/* Send button - aligned with text */}
-                <IconButton
-                  sx={{
-                    backgroundColor: messageInput.trim()
-                      ? "#00875A"
-                      : "#d1d5db",
-                    color: messageInput.trim() ? "white" : "#6b7280",
-                    width: { xs: 36, sm: 40 },
-                    height: { xs: 36, sm: 40 },
-                    borderRadius: "50%",
-                    transition: "all 0.2s ease",
-                    flexShrink: 0,
-                    "&:hover": {
-                      backgroundColor: messageInput.trim()
-                        ? "#1b5e20"
-                        : "#d1d5db",
-                      transform: messageInput.trim() ? "scale(1.05)" : "none",
-                    },
-                  }}
-                  onClick={() => handleSendMessage()}
-                  disabled={!messageInput.trim()}
-                >
-                  <IoSend size={16} />
-                </IconButton>
-              </Paper>
-            </Box>
-          </Box>
+          {/* Reusable Chat Input Bar */}
+          <ChatInputBar
+            value={messageInput}
+            onChange={setMessageInput}
+            onSend={handleSendMessage}
+            placeholder="Send a message"
+            showSuggestions={!hasUserMessages}
+            persona={persona}
+            sidebarOpen={sidebarOpen}
+            sidebarWidth={SIDEBAR_WIDTH}
+            maxWidth={960}
+          />
         </Box>
       </Box>
     </Box>

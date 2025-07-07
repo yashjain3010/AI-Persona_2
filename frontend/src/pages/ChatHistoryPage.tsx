@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { Container, Box } from "@mui/material";
-import Header from "../components/Header";
-import SearchBar from "../components/SearchBar";
+import Header from "../components/discover/Header";
+import SearchBar from "../components/discover/SearchBar";
 import ChatHistoryTabs from "../components/chatHistory/ChatHistoryTabs";
-import ChatHistoryList, { type Chat } from "../components/chatHistory/ChatHistoryList";
+import ChatHistoryList, {
+  type Chat,
+} from "../components/chatHistory/ChatHistoryList";
 
 // Example mock chat data
 const mockChats: Chat[] = [
   {
     avatar: "https://randomuser.me/api/portraits/men/32.jpg",
     name: "David Lee",
-    message: "What features should we prioritize in the upcoming terminal update?",
+    message:
+      "What features should we prioritize in the upcoming terminal update?",
     date: "10/10/2024",
   },
   {
@@ -64,7 +67,7 @@ const mockChats: Chat[] = [
 ];
 
 const ChatHistoryPage: React.FC = () => {
-  const [tab, setTab] = useState<'all' | 'archived'>('all');
+  const [tab, setTab] = useState<"all" | "archived">("all");
   const [search, setSearch] = useState("");
 
   // Filter chats by search (simple case-insensitive match)
@@ -78,8 +81,14 @@ const ChatHistoryPage: React.FC = () => {
     <Box sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
       <Header />
       <Container sx={{ py: 4, maxWidth: 900 }}>
-        <Box sx={{ width: '100%', mx: 'auto', mb: 2, px: 1 }}>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search" fullWidth maxWidth={1200} />
+        <Box sx={{ width: "100%", mx: "auto", mb: 2, px: 1 }}>
+          <SearchBar
+            value={search}
+            onChange={setSearch}
+            placeholder="Search"
+            fullWidth
+            maxWidth={1200}
+          />
         </Box>
         <Box sx={{ px: 1 }}>
           <ChatHistoryTabs tab={tab} onTabChange={setTab} />
@@ -90,4 +99,4 @@ const ChatHistoryPage: React.FC = () => {
   );
 };
 
-export default ChatHistoryPage; 
+export default ChatHistoryPage;
