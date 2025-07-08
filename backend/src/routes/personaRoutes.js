@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const { MongoClient } = require('mongodb');
+const chatController = require('../controller/chatController');
+const Chat = require('../models/Chat');
+const PersonaTrait = require('../models/PersonaTrait');
 
 // MongoDB connection string
-const uri = "mongodb+srv://harshg:h9982346893@cluster0.xiam8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri =
+  "mongodb://root:rootpassword@localhost:27017/ai_persona?authSource=admin";
+
+// Chat message routes - MUST come before /:id routes
+router.post('/chats', chatController.saveMessage);
+router.get('/chats', chatController.getMessages);
 
 // Get all traits for a persona
 router.get('/traits', async (req, res) => {
@@ -235,6 +243,107 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error fetching persona', error: error.message });
   } finally {
     await client.close();
+  }
+});
+
+// Get all chats for a user
+router.get('/chats', async (req, res) => {
+  try {
+    const { user, persona, session_id } = req.query;
+    let query = { user };
+
+    if (persona && persona !== 'all') {
+      query.persona = persona;
+    }
+
+    if (session_id) {
+      query.session_id = session_id;
+    }
+
+    const chats = await Chat.find(query).sort({ timestamp: 1 });
+    
+    res.json({
+      success: true,
+      chats: chats
+    });
+  } catch (error) {
+    console.error('Error fetching chats:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch chats'
+    });
+  }
+});
+
+// Store a new chat
+router.post('/chats', async (req, res) => {
+  try {
+    const { user, persona, session_id, user_message, ai_response } = req.body;
+    
+    const newChat = new Chat({
+      user,
+      persona,
+      session_id,
+      user_message,
+      ai_response
+    });
+
+    await newChat.save();
+    
+    res.json({
+      success: true,
+      message: 'Chat stored successfully'
+    });
+  } catch (error) {
+    console.error('Error storing chat:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to store chat'
+    });
+  }
+});
+
+// Get persona traits
+router.get('/traits/:personaId', async (req, res) => {
+  try {
+    const { personaId } = req.params;
+    const traits = await PersonaTrait.findOne({ personaId });
+    
+    if (!traits) {
+      return res.status(404).json({
+        success: false,
+        error: 'Persona traits not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      traits: traits
+    });
+  } catch (error) {
+    console.error('Error fetching persona traits:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch persona traits'
+    });
+  }
+});
+
+// Get all persona traits
+router.get('/traits', async (req, res) => {
+  try {
+    const traits = await PersonaTrait.find({});
+    
+    res.json({
+      success: true,
+      traits: traits
+    });
+  } catch (error) {
+    console.error('Error fetching all persona traits:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch persona traits'
+    });
   }
 });
 
