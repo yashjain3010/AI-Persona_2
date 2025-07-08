@@ -7,13 +7,19 @@ export interface Chat {
   name: string;
   message: string;
   date: string;
+  onClick?: () => void;
+  onRightClick?: () => void;
 }
 
 interface ChatHistoryListProps {
   chats: Chat[];
+  onSessionClick?: (index: number) => void;
 }
 
-const ChatHistoryList: React.FC<ChatHistoryListProps> = ({ chats }) => (
+const ChatHistoryList: React.FC<ChatHistoryListProps> = ({
+  chats,
+  onSessionClick,
+}) => (
   <Box ml={2}>
     {chats.map((chat, idx) => (
       <Box key={idx} sx={{ mb: 0.5 }}>
@@ -23,4 +29,4 @@ const ChatHistoryList: React.FC<ChatHistoryListProps> = ({ chats }) => (
   </Box>
 );
 
-export default ChatHistoryList; 
+export default ChatHistoryList;
