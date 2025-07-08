@@ -53,12 +53,11 @@ const mockStats = [
 const mockExpertise = [
   "Strategic decision-making and risk mitigation",
   "Financial efficiency and operational cost control",
-  "Structuring commercial deals with success-based, flexible pricing aligned to loan disbursements",
-  "Ensuring risk management and compliance with PCI-DSS, ISO 27001, GDPR, RBI regulations",
-  "Leveraging real-time analytics for performance monitoring and risk mitigation",
-  "Driving operational scalability and rapid fintech deployments across multi-channel environments",
-  "Collaborating cross-functionally on pilot planning, compliance validation, and rollouts",
-  "Managing vendors with financial, operational, and technical oversight",
+  "Pilot program design and execution for solution testing",
+  "Timeline setting and project gating process management",
+  "Operational efficiency enhancement and scalability planning",
+  "Data-driven feedback loops and iterative process improvement",
+  "Cross-functional collaboration between finance, product, and operations teams"
 ];
 const mockTraits = [
   "Detail-oriented with an emphasis on financial viability and transparent reporting",
