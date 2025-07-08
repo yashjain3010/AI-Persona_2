@@ -10,12 +10,20 @@ import {
   Dialog,
   useTheme,
   useMediaQuery,
+  Popover,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
 } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from "@mui/icons-material/Menu";
 import { CiSettings } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import SettingsPage from '../pages/SettingsPage';
+import SettingsPage from "../pages/SettingsPage";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 interface ChatHeaderProps {
   onBack: () => void;
@@ -24,12 +32,33 @@ interface ChatHeaderProps {
   backIcon?: React.ReactNode;
 }
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, backIcon }) => {
+const ChatHeader: React.FC<ChatHeaderProps> = ({
+  onBack,
+  onMenu,
+  isSidebarOpen,
+  backIcon,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const SIDEBAR_WIDTH = isMobile ? 280 : 220; // Match Sidebar width
+
+  // Profile popover state and handlers
+  const [profileAnchorEl, setProfileAnchorEl] =
+    React.useState<null | HTMLElement>(null);
+  const profileOpen = Boolean(profileAnchorEl);
+  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+  const handleProfileClose = () => {
+    setProfileAnchorEl(null);
+  };
+  const handleLogout = () => {
+    // TODO: Clear auth state if implemented
+    handleProfileClose();
+    navigate("/login");
+  };
 
   return (
     <AppBar
@@ -196,7 +225,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
               </>
             );
           })()}
-          <Button>
+          <Button onClick={handleProfileClick} sx={{ minWidth: 0, p: 0.5 }}>
             <Avatar
               src="https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740"
               sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 } }}
@@ -204,8 +233,41 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
           </Button>
         </Box>
       </Toolbar>
+
+      {/* Profile Popover */}
+      <Popover
+        open={profileOpen}
+        anchorEl={profileAnchorEl}
+        onClose={handleProfileClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        PaperProps={{
+          sx: {
+            mt: 1,
+            minWidth: 200,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+            borderRadius: 3,
+          },
+        }}
+      >
+        <List sx={{ py: 0 }}>
+          <ListItem button>
+            <ListItemIcon>
+              <HelpOutlineIcon />
+            </ListItemIcon>
+            <ListItemText primary="Help & Support" />
+          </ListItem>
+          <Divider />
+          <ListItem button onClick={handleLogout}>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List>
+      </Popover>
     </AppBar>
   );
 };
 
-export default ChatHeader; 
+export default ChatHeader;

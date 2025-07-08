@@ -7,7 +7,7 @@ const PersonaTrait = require('../models/PersonaTrait');
 
 // MongoDB connection string
 const uri =
-  "mongodb://root:rootpassword@localhost:27017/ai_persona?authSource=admin";
+  "mongodb+srv://harshg:h9982346893@cluster0.xiam8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // Chat message routes - MUST come before /:id routes
 router.post('/chats', chatController.saveMessage);

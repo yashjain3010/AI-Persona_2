@@ -42,12 +42,8 @@ const mockPersona = {
   name: "Ethan Carter",
   role: "Head of payment",
   avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  about: `Senior finance executives specialize in managing retail banking credit portfolios and embedded lending solutions within banking and financial services. They focus on scalable, compliant, and cost-efficient retail credit growth, especially in tier 2/3 cities and underserved markets. These leaders collaborate closely with product and technology teams to integrate credit solutions across various merchant channels such as POS, QR, and online. Their strategic priorities include regulatory compliance, risk mitigation, data transparency, and cost control.`,
-  communication: `Clear, data-driven communication focused on transparency and measurable results
-Direct dialogue aligning financial models, risk frameworks, and compliance requirements
-Structured communication to clarify requirements, validate technical feasibility, and confirm assumptions
-Facilitates cross-team collaboration emphasizing governance, review processes, and stakeholder alignment
-Focuses communication on deployment timelines and pilot success metrics.`,
+  about: `Executives with deep involvement in strategic decision-making and partnership formation within financial and product-centric environments. Professionals operating in contexts requiring accelerated decision cycles and internal stakeholder alignment, particularly in areas related to financial efficiency, operational scalability, and controlled pilot testing in banking and credit product domains.`,
+  communication: `Clear, direct, and data-driven communication focused on accelerating decision processes and aligning internal stakeholders. Professionals emphasize transparency and financial efficiency while facilitating prompt review cycles. Communications typically aim to build confidence around proposed solutions, ensuring buy-in and readiness to move forward with controlled, evidence-based pilots.`,
 };
 const mockStats = [
   { label: "Avg. User Rating", value: "4.8/5" },
@@ -55,14 +51,14 @@ const mockStats = [
   { label: "Success Rate", value: "92%" },
 ];
 const mockExpertise = [
-  "Expanding embedded retail lending portfolios with cost-efficient models",
-  "Conducting cost modeling and sensitivity analysis for loan processes",
+  "Strategic decision-making and risk mitigation",
+  "Financial efficiency and operational cost control",
   "Structuring commercial deals with success-based, flexible pricing aligned to loan disbursements",
   "Ensuring risk management and compliance with PCI-DSS, ISO 27001, GDPR, RBI regulations",
   "Leveraging real-time analytics for performance monitoring and risk mitigation",
   "Driving operational scalability and rapid fintech deployments across multi-channel environments",
   "Collaborating cross-functionally on pilot planning, compliance validation, and rollouts",
-  "Managing vendors with financial, operational, and technical oversight"
+  "Managing vendors with financial, operational, and technical oversight",
 ];
 const mockTraits = [
   "Detail-oriented with an emphasis on financial viability and transparent reporting",

@@ -18,8 +18,9 @@ import type { Persona } from "../types";
 import ChatHeader from "../components/ChatHeader";
 import Sidebar from "../components/sidebar/Sidebar";
 import { mockPersonas } from "../data/mockData";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { sendToWebhook, isWebhookPersona } from "../services/webhookService";
+import FormattedOutput from "../components/FormattedOutput";
 import { getSessionId, startNewSession } from "../utils/session";
 
 interface ChatPageProps {
@@ -93,6 +94,7 @@ const TypingIndicator = () => (
 
 export default function ChatPage({ onBack }: ChatPageProps) {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionIdFromUrl = searchParams.get("session");
 
@@ -101,7 +103,6 @@ export default function ChatPage({ onBack }: ChatPageProps) {
     return <div>Persona not found</div>;
   }
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -166,9 +167,6 @@ export default function ChatPage({ onBack }: ChatPageProps) {
     // Intentionally empty - user avatar is optional
   }
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
   // Handler to open sidebar from header
   const handleMenuClick = () => setSidebarOpen(true);
   // Handler to close sidebar
@@ -192,7 +190,16 @@ export default function ChatPage({ onBack }: ChatPageProps) {
     handleSwitcherClose();
   };
 
-  // Handle sending a message
+  const handleAvatarClick = () => {
+    navigate(`/view-persona/${persona.id}`);
+  };
+
+  const handleRoleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    setSwitcherOpen(true);
+  };
+
+  // Updated handleSendMessage with session ID logic and chat persistence
   const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const trimmed = messageInput.trim();
@@ -208,6 +215,10 @@ export default function ChatPage({ onBack }: ChatPageProps) {
       (messages.length === 0
         ? startNewSession(persona.id)
         : getSessionId(persona.id));
+
+    if (!currentSessionId) {
+      setCurrentSessionId(sessionId);
+    }
 
     // Send message to backend for MongoDB storage
     let userId = "current_user"; // Default fallback
@@ -227,7 +238,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
         // Add a typing indicator
         setMessages((prev) => [
           ...prev,
-          { sender: "ai", text: "", isTyping: true }, // Add isTyping flag
+          { sender: "ai", text: "", isTyping: true },
         ]);
 
         // Get AI response from webhook
@@ -270,7 +281,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
           newMessages[newMessages.length - 1] = {
             sender: "ai",
             text: webhookResponse,
-            isTyping: false, // Remove typing flag
+            isTyping: false,
           };
           return newMessages;
         });
@@ -418,6 +429,10 @@ export default function ChatPage({ onBack }: ChatPageProps) {
     return () => clearTimeout(timeoutId);
   }, [messages]);
 
+  // Check if user has sent first message
+  const hasUserMessages =
+    messages.filter((msg) => msg.sender === "user").length > 0;
+
   // Show loading indicator while loading chat history
   if (isLoading) {
     return (
@@ -445,8 +460,8 @@ export default function ChatPage({ onBack }: ChatPageProps) {
         bgcolor: "#fff",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden", // Prevent page-level scroll
-        width: "100vw", // Ensure no horizontal scroll
+        overflow: "hidden",
+        width: "100vw",
         maxWidth: "100vw",
       }}
     >
@@ -468,12 +483,12 @@ export default function ChatPage({ onBack }: ChatPageProps) {
           display: "flex",
           flexDirection: "row",
           flex: 1,
-          overflow: "hidden", // Contain the scrolling areas
+          overflow: "hidden",
           width: "100%",
           maxWidth: "100vw",
         }}
       >
-        {/* Sidebar - only this should scroll */}
+        {/* Sidebar */}
         {sidebarOpen && (
           <Sidebar onClose={handleSidebarClose} currentPersonaId={persona.id} />
         )}
@@ -493,7 +508,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
             overflow: "hidden",
           }}
         >
-          {/* Scrollable message list fills the rest of the space */}
+          {/* Scrollable message list */}
           <Box
             ref={messageListRef}
             sx={{
@@ -506,13 +521,12 @@ export default function ChatPage({ onBack }: ChatPageProps) {
               mx: 0,
               overflowY: "auto",
               overflowX: "hidden",
-              pb: { xs: 20, sm: 30 }, // Add bottom padding to create space above input bar
-              scrollbarWidth: "none", // Firefox
-              "&::-webkit-scrollbar": { display: "none" }, // Chrome, Safari, Opera
+              pb: { xs: 20, sm: 30 },
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
               minHeight: 0,
             }}
           >
-            {/* Message list */}
             <Box
               sx={{
                 width: "100%",
@@ -526,28 +540,35 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                 overflow: "visible",
               }}
             >
-              {/* Persona Profile - now scrolls with messages */}
+              {/* Persona Profile with separate click handlers */}
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  cursor: "pointer",
                   mb: { xs: 2, sm: 3 },
                   px: { xs: 2, sm: 0 },
                   pt: { xs: 2, sm: 3 },
                   pb: { xs: 1, sm: 2 },
                 }}
-                onClick={handleProfileClick}
               >
+                {/* Avatar - clicks to view persona */}
                 <Avatar
                   src={persona.avatar}
                   sx={{
                     width: { xs: 80, sm: 96 },
                     height: { xs: 80, sm: 96 },
                     mb: { xs: 1.5, sm: 2 },
+                    cursor: "pointer",
+                    transition: "transform 0.2s ease-in-out",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
                   }}
+                  onClick={handleAvatarClick}
                 />
+
+                {/* Name */}
                 <Typography
                   variant="h5"
                   sx={{
@@ -560,6 +581,8 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                 >
                   {persona.name}
                 </Typography>
+
+                {/* Role - clicks to show persona switcher */}
                 <Box
                   sx={{
                     display: "flex",
@@ -567,7 +590,16 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                     gap: 1,
                     mb: 0,
                     flexDirection: { xs: "column", sm: "row" },
+                    cursor: "pointer",
+                    borderRadius: 1,
+                    px: 1,
+                    py: 0.5,
+                    transition: "background-color 0.2s ease-in-out",
+                    "&:hover": {
+                      backgroundColor: "#f5f5f5",
+                    },
                   }}
+                  onClick={handleRoleClick}
                 >
                   <Typography
                     variant="subtitle1"
@@ -585,6 +617,8 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                   />
                 </Box>
               </Box>
+
+              {/* Messages */}
               {messages.map((msg, idx) =>
                 msg.sender === "ai" ? (
                   <Box
@@ -640,9 +674,16 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                             fontFamily:
                               "Inter, Roboto, Helvetica, Arial, sans-serif",
                             textAlign: "left",
+                            whiteSpace: "pre-wrap",
                           }}
                         >
-                          {msg.isTyping ? <TypingIndicator /> : msg.text}
+                          {msg.isTyping ? (
+                            <TypingIndicator />
+                          ) : msg.text.match(/(\n\s*[-*]|^\d+\.|^#)/m) ? (
+                            <FormattedOutput content={msg.text} />
+                          ) : (
+                            msg.text
+                          )}
                         </Box>
                       </Box>
                     </Box>
@@ -710,7 +751,8 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                           lineHeight: 1.5,
                           fontFamily:
                             "Inter, Roboto, Helvetica, Arial, sans-serif",
-                          textAlign: "justify",
+                          textAlign: "start",
+                          whiteSpace: "pre-wrap",
                         }}
                       >
                         {msg.text}
@@ -720,6 +762,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                 )
               )}
             </Box>
+
             {/* Persona Switcher Popup */}
             {switcherOpen && anchorEl && (
               <ClickAwayListener onClickAway={handleSwitcherClose}>
@@ -816,7 +859,7 @@ export default function ChatPage({ onBack }: ChatPageProps) {
             }}
           >
             {/* Suggestion Chips - Hide after user sends first message */}
-            {messages.filter((msg) => msg.sender === "user").length === 0 && (
+            {!hasUserMessages && (
               <Box
                 sx={{
                   display: "flex",
