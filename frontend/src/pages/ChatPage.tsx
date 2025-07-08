@@ -21,6 +21,7 @@ import { mockPersonas } from "../data/mockData";
 import { useParams, useNavigate } from "react-router-dom";
 import { sendToWebhook, isWebhookPersona } from "../services/webhookService";
 import ChatInputBar from "../components/ChatInputBar";
+import FormattedOutput from "../components/FormattedOutput";
 
 interface ChatPageProps {
   onBack: () => void;
@@ -524,7 +525,13 @@ export default function ChatPage({ onBack }: ChatPageProps) {
                             textAlign: "left",
                           }}
                         >
-                          {msg.isTyping ? <TypingIndicator /> : msg.text}
+                          {msg.isTyping ? (
+                            <TypingIndicator />
+                          ) : msg.text.match(/(\n\s*[-*]|^\d+\.|^#)/m) ? (
+                            <FormattedOutput content={msg.text} />
+                          ) : (
+                            msg.text
+                          )}
                         </Box>
                       </Box>
                     </Box>

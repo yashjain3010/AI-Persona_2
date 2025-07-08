@@ -119,21 +119,6 @@ const Header: React.FC = () => {
           >
             Pine Labs
           </Typography>
-          <IconButton
-            sx={{
-              backgroundColor: "#00875A",
-              color: "white",
-              width: { xs: 36, sm: 40 },
-              height: { xs: 36, sm: 40 },
-              borderRadius: "10%",
-              "&:hover": {
-                backgroundColor: "#00875A",
-              },
-            }}
-            onClick={() => navigate("/persona-selector")}
-          >
-            <IoChatbubbleEllipsesOutline size={isMobile ? 18 : 20} />
-          </IconButton>
         </Box>
 
         {/* Right section - Navigation, Search, Settings and Profile */}
@@ -253,7 +238,7 @@ const Header: React.FC = () => {
           {/* Profile (always visible) */}
           <Button onClick={handleProfileClick} sx={{ minWidth: 0, p: 0.5 }}>
             <Avatar
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+              src="https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740"
               sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 } }}
             />
           </Button>

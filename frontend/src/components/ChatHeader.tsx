@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { CiSettings } from "react-icons/ci";
-
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import SettingsPage from '../pages/SettingsPage';
@@ -39,24 +38,28 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
       sx={{
         backgroundColor: "#fff",
         color: "#333",
-        boxShadow: 'none',
-        borderBottom: '1px solid #e9ecef',
+        boxShadow: "none",
+        borderBottom: "1px solid #e9ecef",
       }}
     >
-      <Toolbar sx={{ 
-        justifyContent: "space-between", 
-        px: { xs: 2, sm: 3 }, 
-        minHeight: { xs: 56, sm: 64 } 
-      }}>
+      <Toolbar
+        sx={{
+          justifyContent: "space-between",
+          px: { xs: 2, sm: 3 },
+          minHeight: { xs: 56, sm: 64 },
+        }}
+      >
         {/* Left-side spacer when sidebar is open */}
-        {isSidebarOpen && <Box sx={{ width: `${SIDEBAR_WIDTH}px`, flexShrink: 0 }} />}
+        {isSidebarOpen && (
+          <Box sx={{ width: `${SIDEBAR_WIDTH}px`, flexShrink: 0 }} />
+        )}
         {/* Left section - Back and Menu, hidden when sidebar is open */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             gap: 0.5,
-            transition: 'margin-left 0.3s cubic-bezier(.4,0,.2,1)',
+            transition: "margin-left 0.3s cubic-bezier(.4,0,.2,1)",
           }}
         >
           {!isSidebarOpen && (
@@ -66,61 +69,77 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
                 onClick={onBack}
                 sx={{
                   fontSize: { xs: 24, sm: 28 },
-                  color: '#000',
+                  color: "#000",
                   fontWeight: 900,
-                  fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
+                  fontFamily: "Inter, Roboto, Helvetica, Arial, sans-serif",
                   p: { xs: 0.8, sm: 1 },
                   mr: 0.2,
-                  background: 'none',
-                  border: 'none',
+                  background: "none",
+                  border: "none",
                   borderRadius: 0,
-                  boxShadow: 'none',
-                  '&:hover': {
-                    color: '#059134',
-                    background: 'none',
+                  boxShadow: "none",
+                  "&:hover": {
+                    color: "#059134",
+                    background: "none",
                   },
                 }}
               >
-                {typeof backIcon !== 'undefined' ? backIcon : '<'}
+                {typeof backIcon !== "undefined" ? backIcon : "<"}
               </IconButton>
               <IconButton
                 size="small"
                 sx={{
-                  color: '#000',
+                  color: "#000",
                   fontSize: { xs: 20, sm: 22 },
                   fontWeight: 900,
-                  fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
+                  fontFamily: "Inter, Roboto, Helvetica, Arial, sans-serif",
                   p: { xs: 0.6, sm: 0.7 },
                   ml: 0.2,
-                  background: 'none',
-                  border: 'none',
+                  background: "none",
+                  border: "none",
                   borderRadius: 0,
-                  boxShadow: 'none',
-                  '&:hover': {
-                    color: '#059134',
-                    background: 'none',
+                  boxShadow: "none",
+                  "&:hover": {
+                    color: "#059134",
+                    background: "none",
                   },
                 }}
                 onClick={onMenu}
               >
-                <MenuIcon sx={{ fontSize: { xs: 20, sm: 22 }, fontWeight: 900 }} />
+                <MenuIcon
+                  sx={{ fontSize: { xs: 20, sm: 22 }, fontWeight: 900 }}
+                />
               </IconButton>
             </>
           )}
         </Box>
 
         {/* Center section - Spacer (matches Discover header) */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 4, flex: 1, mx: { xs: 2, sm: 4 } }}></Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            flex: 1,
+            mx: { xs: 2, sm: 4 },
+          }}
+        ></Box>
 
         {/* Right section - Navigation, Settings, Avatar */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.5, sm: 1 } }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: 0.5, sm: 1 },
+          }}
+        >
           {/* Hide navigation buttons on mobile */}
           {!isMobile && (
             <Stack direction="row">
               <Button
                 sx={{
                   color: location.pathname === "/" ? "#059134" : "#666",
-                  fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
+                  fontFamily: "Inter, Roboto, Helvetica, Arial, sans-serif",
                   fontWeight: 500,
                   fontSize: "16px",
                   lineHeight: "24px",
@@ -137,8 +156,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
               </Button>
               <Button
                 sx={{
-                  color: location.pathname === "/chat-history" ? "#059134" : "#666",
-                  fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif',
+                  color:
+                    location.pathname === "/chat-history" ? "#059134" : "#666",
+                  fontFamily: "Inter, Roboto, Helvetica, Arial, sans-serif",
                   fontWeight: 500,
                   fontSize: "16px",
                   lineHeight: "24px",
@@ -159,24 +179,26 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onBack, onMenu, isSidebarOpen, 
             const [settingsOpen, setSettingsOpen] = React.useState(false);
             const handleSettingsOpen = () => setSettingsOpen(true);
             const handleSettingsClose = () => setSettingsOpen(false);
-            return <>
-              <IconButton sx={{ color: "#666" }} onClick={handleSettingsOpen}>
-                <CiSettings size={isMobile ? 20 : 24} />
-              </IconButton>
-              <Dialog 
-                open={settingsOpen} 
-                onClose={handleSettingsClose} 
-                maxWidth="md" 
-                fullWidth
-                fullScreen={isMobile}
-              >
-                <SettingsPage />
-              </Dialog>
-            </>;
+            return (
+              <>
+                <IconButton sx={{ color: "#666" }} onClick={handleSettingsOpen}>
+                  <CiSettings size={isMobile ? 20 : 24} />
+                </IconButton>
+                <Dialog
+                  open={settingsOpen}
+                  onClose={handleSettingsClose}
+                  maxWidth="md"
+                  fullWidth
+                  fullScreen={isMobile}
+                >
+                  <SettingsPage />
+                </Dialog>
+              </>
+            );
           })()}
           <Button>
             <Avatar
-              src="https://randomuser.me/api/portraits/women/44.jpg"
+              src="https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740"
               sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 } }}
             />
           </Button>

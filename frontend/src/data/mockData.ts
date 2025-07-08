@@ -4,8 +4,8 @@ export const mockPersonas: Persona[] = [
   {
     id: "1",
     name: "Ethan Carter",
-    role: "Chief Marketing Officer (CMO)",
-    department: "Marketing",
+    role: "Chief Financial Officer (CFO)",
+    department: "Sales",
     avatar:
       "https://static.vecteezy.com/system/resources/thumbnails/027/951/137/small_2x/stylish-spectacles-guy-3d-avatar-character-illustrations-png.png",
     hasStartChat: false,

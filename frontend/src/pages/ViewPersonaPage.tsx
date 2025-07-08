@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Container, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/discover/Header";
 import ViewPersonaSidebar from "../components/viewPersona/ViewPersonaSidebar";
@@ -17,10 +17,6 @@ import type { Persona } from "../types";
 import { mockPersonas } from "../data/mockData";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 
 interface ViewPersonaPageProps {
   persona?: Persona;
@@ -46,8 +42,12 @@ const mockPersona = {
   name: "Ethan Carter",
   role: "Head of payment",
   avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  about: `Ethan Carter has  years of expertise in optimizing payment experiences across digital and in-store commerce. He specializes in transaction design, fraud prevention, partner integrations, and scalable payment architecture for B2B and B2C ecosystems.\nHe provides high-impact guidance on cost-efficient transaction flows, modern checkout UX, cross-border payment compliance, and omnichannel integration.`,
-  communication: `Ethan's communication style is characterized by clarity, conciseness, and a collaborative approach. He excels at articulating complex ideas in a simple and understandable manner, fostering open dialogue and ensuring all team members are aligned. His approach is both professional and approachable, making him an effective communicator across all levels of the organization.`,
+  about: `Senior finance executives specialize in managing retail banking credit portfolios and embedded lending solutions within banking and financial services. They focus on scalable, compliant, and cost-efficient retail credit growth, especially in tier 2/3 cities and underserved markets. These leaders collaborate closely with product and technology teams to integrate credit solutions across various merchant channels such as POS, QR, and online. Their strategic priorities include regulatory compliance, risk mitigation, data transparency, and cost control.`,
+  communication: `Clear, data-driven communication focused on transparency and measurable results
+Direct dialogue aligning financial models, risk frameworks, and compliance requirements
+Structured communication to clarify requirements, validate technical feasibility, and confirm assumptions
+Facilitates cross-team collaboration emphasizing governance, review processes, and stakeholder alignment
+Focuses communication on deployment timelines and pilot success metrics.`,
 };
 const mockStats = [
   { label: "Avg. User Rating", value: "4.8/5" },
@@ -55,29 +55,38 @@ const mockStats = [
   { label: "Success Rate", value: "92%" },
 ];
 const mockExpertise = [
-  "Research Collaboration",
-  "Fraud & Risk Management",
-  "Checkout UX Optimization",
-  "Terminal Hardware Advisory",
-  "Payment Gateway Evaluation",
-  "Regulatory Compliance",
-  "Dynamic Routing Strategy",
+  "Expanding embedded retail lending portfolios with cost-efficient models",
+  "Conducting cost modeling and sensitivity analysis for loan processes",
+  "Structuring commercial deals with success-based, flexible pricing aligned to loan disbursements",
+  "Ensuring risk management and compliance with PCI-DSS, ISO 27001, GDPR, RBI regulations",
+  "Leveraging real-time analytics for performance monitoring and risk mitigation",
+  "Driving operational scalability and rapid fintech deployments across multi-channel environments",
+  "Collaborating cross-functionally on pilot planning, compliance validation, and rollouts",
+  "Managing vendors with financial, operational, and technical oversight"
 ];
 const mockTraits = [
-  "Strategic",
-  "Decisive",
-  "Detail-Oriented",
-  "Collaborative",
-  "Financially Astute",
+  "Detail-oriented with an emphasis on financial viability and transparent reporting",
+  "Risk-averse, prioritizing compliance and regulatory control over growth",
+  "Strategic thinker balancing growth with operational and risk constraints",
+  "Collaborative, fully engaging product, technology, risk, and compliance teams",
+  "Pragmatic approach valuing scalable, cost-efficient solutions with minimal upfront costs",
+  "Forward-thinking about integration, automation, and data-driven decision-making",
+  "Persistent in securing cross-functional buy-in and managing pilot execution",
+  "Adaptive to evolving regulations and shifting business priorities",
 ];
 const mockPainPoints = [
-  "Difficulty evaluating multiple PSP/gateway vendors",
-  "Lack of clarity on transaction-level costs",
-  "Integrating modern payment features into legacy systems",
+  "Navigating evolving regulatory requirements, especially BNPL and digital lending guidelines",
+  "Managing high costs and inefficiencies in loan origination and customer acquisition",
+  "Meeting demands for full data transparency and real-time integration with BI and risk systems",
+  "Scaling operations without incurring heavy capital or infrastructure costs",
+  "Balancing risk and fraud management alongside rapid and flexible credit deployments",
+  "Ensuring asset quality while achieving rapid credit growth",
+  "Coordinating cross-functional teams for pilot rollouts and ongoing compliance validation",
+  "Maintaining documented controls, audit logs, and security certifications for approvals",
 ];
 const mockResponsibilities = [
-  "Optimize transaction cost efficiency",
-  "Design omnichannel payment flows",
+  "Navigating evolving regulatory requirements, especially BNPL and digital lending guidelines",
+  "Managing high costs and inefficiencies in loan origination and customer acquisition",
   "Ensure regulatory & PCI compliance",
 ];
 const mockSampleQuestions = [
