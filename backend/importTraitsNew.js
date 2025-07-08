@@ -4,7 +4,7 @@ const { MongoClient } = require('mongodb');
 
 // MongoDB connection string
 const uri =
-  "mongodb://root:rootpassword@localhost:27017/ai_persona?authSource=admin";
+  "mongodb+srv://harshg:h9982346893@cluster0.xiam8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
 
 // Parse the trait file with the new format
